@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../layouts/head') %>
+    <title>Relatório de Inconsistências</title>
+</head>
+<body class="bg-light">
+
+    <%- include('../layouts/header') %>
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Relatório de Inconsistências - PDF</h1>
+        <p>Antes de enviar o arquivo, renomeie-o usando um nome simples, sem caracteres especiais e espaços.</p>
+        <% if (messages && messages.length) { %>
+            <div class="alert alert-warning">
+                <%= messages[0] %>
+            </div>
+        <% } %>
+        <form method="POST" action="/ponto" enctype="multipart/form-data" class="border p-4 bg-white rounded shadow-sm">
+            <div class="mb-3">
+                <label for="pdf_file" class="form-label">Selecione o arquivo PDF</label>
+                <input class="form-control" type="file" id="pdf_file" name="pdf_file" accept=".pdf" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Processar e Baixar Relatório</button>
+        </form>
+    </div>
+            
+    <%- include('../layouts/footer') %>
+</body>
+</html>

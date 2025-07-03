@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../layouts/head') %>
+  <title>Adicionar Funcionário</title>
+  <style>
+    .add-card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .form-header {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      color: #0d6efd;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    .input-icon {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('../layouts/header') %>
+
+  <main class="container py-4">
+    <div class="card add-card">
+      <div class="card-body">
+        <div class="form-header">
+          <h1 class="h4 fw-bold text-primary mb-0">
+            <i class="bi bi-person-plus-fill me-2"></i>Adicionar Novo Funcionário
+          </h1>
+          <p class="text-muted small mb-0">Preencha todos os campos obrigatórios</p>
+        </div>
+
+        <form method="POST" action="/employees/add">
+
+          <div class="form-section">
+            <h2 class="section-title h5">
+              <i class="bi bi-person-badge me-2"></i>Informações Pessoais
+            </h2>
+            
+            <div class="row g-3">
+              <div class="col-md-12">
+                <label for="name" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-person"></i>
+                  </span>
+                  <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="registration" class="form-label">Matrícula <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-card-heading"></i>
+                  </span>
+                  <input type="text" id="registration" name="registration" class="form-control" required>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="branchName" class="form-label">Razão Social Filial</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-buildings"></i>
+                  </span>
+                  <input type="text" id="branchName" name="branchName" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-title h5">
+              <i class="bi bi-briefcase me-2"></i>Informações de Trabalho
+            </h2>
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="contractNumber" class="form-label">Contrato <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                  </span>
+                  <input type="text" id="contractNumber" name="contractNumber" class="form-control" required>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="category" class="form-label">Categoria</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-tags"></i>
+                  </span>
+                  <input type="text" id="category" name="category" class="form-control">
+                </div>
+              </div>
+              
+              <div class="col-md-12">
+                <label for="local" class="form-label">Local de Trabalho</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-geo-alt"></i>
+                  </span>
+                  <input type="text" id="local" name="local" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-title h5">
+              <i class="bi bi-calendar-range me-2"></i>Datas Importantes
+            </h2>
+            
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="admissionDate" class="form-label">Data de Admissão <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-calendar-plus"></i>
+                  </span>
+                  <input type="date" id="admissionDate" name="admissionDate" class="form-control" required>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <label for="lastVacationDate" class="form-label">Últimas Férias</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-calendar-check"></i>
+                  </span>
+                  <input type="date" id="lastVacationDate" name="lastVacationDate" class="form-control">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="maxVacationDate" class="form-label">Data Limite de Férias</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-calendar-x"></i>
+                  </span>
+                  <input type="date" id="maxVacationDate" name="maxVacationDate" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-title h5">
+              <i class="bi bi-clock-history me-2"></i>Controle de Dias
+            </h2>
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="vacationDays" class="form-label">Dias de Férias</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-sun"></i>
+                  </span>
+                  <input type="number" id="vacationDays" name="vacationDays" class="form-control" required 
+                         min="0" max="365" value="30">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="absenceDays" class="form-label">Dias de Afastamento</label>
+                <div class="input-group">
+                  <span class="input-group-text input-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                  </span>
+                  <input type="number" id="absenceDays" name="absenceDays" class="form-control" required 
+                         min="0" value="0">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="/employees" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-person-plus me-1"></i> Adicionar Funcionário
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer') %>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+      const admissionDateInput = document.getElementById('admissionDate');
+      const lastVacationDateInput = document.getElementById('lastVacationDate');
+      
+      const today = new Date().toISOString().split('T')[0];
+      admissionDateInput.value = today;
+      
+      function validateVacationDate() 
+      {
+        if (admissionDateInput.value && lastVacationDateInput.value) 
+        {
+          const admissionDate = new Date(admissionDateInput.value);
+          const vacationDate = new Date(lastVacationDateInput.value);
+          
+          if (vacationDate < admissionDate) 
+          {
+            lastVacationDateInput.setCustomValidity('A data de férias não pode ser anterior à data de admissão');
+            lastVacationDateInput.reportValidity();
+          } 
+          else 
+          {
+            lastVacationDateInput.setCustomValidity('');
+          }
+        }
+      }
+      
+      admissionDateInput.addEventListener('change', validateVacationDate);
+      lastVacationDateInput.addEventListener('change', validateVacationDate);
+    });
+  </script>
+</body>
+</html>

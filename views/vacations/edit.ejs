@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../layouts/head') %>
+  <title>Editar Férias</title>
+  <style>
+    .edit-card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .form-header {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .employee-info {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .status-badge {
+      font-size: 0.9rem;
+      padding: 0.35rem 0.65rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('../layouts/header') %>
+
+  <main class="container py-4">
+    <div class="card edit-card">
+      <div class="card-body">
+        <% function formatDate(date) { return new Date(date).toISOString().slice(0,10); } %>
+        
+        <div class="form-header">
+          <h1 class="h4 fw-bold text-primary mb-0">
+            <i class="bi bi-calendar-event me-2"></i>Editar Período de Férias
+          </h1>
+        </div>
+        
+        <div class="employee-info">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="h5 fw-bold mb-1"><%= vacation.Employee.name %></h2>
+              <p class="mb-1 text-muted small">Matrícula: <%= vacation.Employee.registration %></p>
+              <p class="mb-0 text-muted small">Contrato: <%= vacation.Employee.contractNumber || 'N/A' %></p>
+            </div>
+            <span class="badge <%= 
+              vacation.status === 'approved' ? 'bg-success' : 
+              vacation.status === 'rejected' ? 'bg-danger' : 'bg-warning' 
+            %> status-badge">
+              <%= vacation.status === 'pending' ? 'Pendente' : 
+                  vacation.status === 'approved' ? 'Aprovado' : 'Rejeitado' %>
+            </span>
+          </div>
+        </div>
+
+        <form action="/vacations/edit/<%= vacation.id %>" method="POST">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="startDate" class="form-label">Data de Início</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                <input type="date" id="startDate" name="startDate" class="form-control" required 
+                       value="<%= formatDate(vacation.startDate) %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="endDate" class="form-label">Data de Término</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                <input type="date" id="endDate" name="endDate" class="form-control" required 
+                       value="<%= formatDate(vacation.endDate) %>">
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="days" class="form-label">Duração (dias)</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                <input type="number" id="days" name="days" class="form-control" required 
+                       min="1" max="30" value="<%= vacation.days %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="status" class="form-label">Status</label>
+              <select id="status" name="status" class="form-select" required>
+                <option value="pending" <%= vacation.status === 'pending' ? 'selected' : '' %>>Pendente</option>
+                <option value="approved" <%= vacation.status === 'approved' ? 'selected' : '' %>>Aprovado</option>
+                <option value="rejected" <%= vacation.status === 'rejected' ? 'selected' : '' %>>Rejeitado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="/vacations" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save me-1"></i> Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer') %>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+      const daysInput = document.getElementById('days');
+      
+      function calculateDays() {
+        if (startDateInput.value && endDateInput.value) {
+          const startDate = new Date(startDateInput.value);
+          const endDate = new Date(endDateInput.value);
+          
+          const diffTime = Math.abs(endDate - startDate);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          
+          daysInput.value = diffDays;
+        }
+      }
+      
+      startDateInput.addEventListener('change', calculateDays);
+      endDateInput.addEventListener('change', calculateDays);
+      
+      function validateDates() {
+        if (startDateInput.value && endDateInput.value) {
+          const startDate = new Date(startDateInput.value);
+          const endDate = new Date(endDateInput.value);
+          
+          if (endDate < startDate) {
+            endDateInput.setCustomValidity('A data de término deve ser posterior à data de início');
+            endDateInput.reportValidity();
+          } else {
+            endDateInput.setCustomValidity('');
+          }
+        }
+      }
+      
+      startDateInput.addEventListener('change', validateDates);
+      endDateInput.addEventListener('change', validateDates);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('./layouts/head') %>
+  <title>Servfaz Apps</title>
+  <style>
+    .app-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
+    
+    .app-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .app-card.ferias {
+      border-left: 5px solid var(--ferias-color);
+    }
+    
+    .app-card.ponto {
+      border-left: 5px solid var(--ponto-color);
+    }
+    
+    .app-card.fgts {
+      border-left: 5px solid var(--fgts-color);
+    }
+    
+    .app-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .ferias .app-icon {
+      color: var(--ferias-color);
+    }
+    
+    .ponto .app-icon {
+      color: var(--ponto-color);
+    }
+    
+    .fgts .app-icon {
+      color: var(--fgts-color);
+    }
+    
+    .welcome-card {
+      background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+      color: white;
+      border-radius: 15px;
+    }
+    
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border: 3px solid rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('./layouts/header') %>
+
+    <main class="container py-4">
+
+        <!-- Welcome Card -->
+        <div class="card welcome-card mb-4 border-0">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="card-title mb-3">Bem-vindo!</h2>
+                <p class="card-text mb-4">Acesse todos os aplicativos disponíveis em um só lugar.</p>
+            </div>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Apps Section -->
+        <h3 class="mb-4">Meus Aplicativos</h3>
+        <div class="row g-4">
+        <!-- FériasApp -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/ferias" class="text-decoration-none">
+            <div class="card app-card ferias">
+                <div class="card-body p-4 text-center">
+                <div class="app-icon">
+                    <i class="bi bi-calendar-range"></i>
+                </div>
+                <h4 class="card-title">Férias App</h4>
+                <p class="card-text">Gerencie a distribuição de férias</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center py-3">
+                <button class="btn btn-sm btn-outline-primary">Acessar</button>
+                </div>
+            </div>
+            </a>
+        </div>
+        
+        <!-- PontoApp -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/ponto" class="text-decoration-none">
+            <div class="card app-card ponto">
+                <div class="card-body p-4 text-center">
+                <div class="app-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h4 class="card-title">Ponto App</h4>
+                <p class="card-text">Verifique inconsistências na folha de ponto</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center py-3">
+                <button class="btn btn-sm btn-outline-success">Acessar</button>
+                </div>
+            </div>
+            </a>
+        </div>
+        
+        <!-- FgtsApp -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/fgts" class="text-decoration-none">
+            <div class="card app-card fgts">
+                <div class="card-body p-4 text-center">
+                <div class="app-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h4 class="card-title">Fgts App</h4>
+                <p class="card-text">Consulte competências e saldos do FGTS</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center py-3">
+                <button class="btn btn-sm btn-outline-warning">Acessar</button>
+                </div>
+            </div>
+            </a>
+        </div>
+
+    </main>
+
+  <%- include('./layouts/footer') %>
+</body>
+</html>

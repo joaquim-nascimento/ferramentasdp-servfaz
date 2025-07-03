@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../layouts/head') %>
+  <title>Lista de Férias</title>
+  <style>
+    .vacation-table {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .table thead th {
+      background-color: #0d6efd;
+      color: white;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+    .badge-pending {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    .badge-approved {
+      background-color: #198754;
+    }
+    .badge-rejected {
+      background-color: #dc3545;
+    }
+    .action-buttons .btn {
+      min-width: 100px;
+    }
+    .warning-card {
+      border-left: 4px solid #ffc107;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('../layouts/header') %>
+
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h2 fw-bold text-primary">
+        <i class="bi bi-calendar-check me-2"></i>Lista de Férias
+      </h1>
+      <div>
+        <a href="/vacations/distribute" class="btn btn-primary me-2">
+          <i class="bi bi-calendar-plus me-1"></i> Distribuir Férias
+        </a>
+        <a href="/vacations/report" class="btn btn-success">
+          <i class="bi bi-file-earmark-text me-1"></i> Gerar Relatório
+        </a>
+      </div>
+    </div>
+    
+    <div class="alert alert-warning warning-card d-flex align-items-center mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+      <div>
+        <strong>Atenção:</strong> Ao clicar em <strong>"Aprovar Todos"</strong>, todas as férias pendentes serão <strong>aprovadas</strong> imediatamente.
+      </div>
+    </div>
+    
+    <% if (vacations && vacations.length > 0) { %>
+      <div class="table-responsive mb-4 vacation-table">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>Funcionário</th>
+              <th>Matrícula</th>
+              <th>Início</th>
+              <th>Término</th>
+              <th class="text-center">Dias</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-active">
+              <td colspan="6"></td>
+              <td class="text-center">
+                <a href="/vacations/approveAll" class="btn btn-primary btn-sm fw-bold">
+                  <i class="bi bi-check-all me-1"></i> Aprovar Todos
+                </a>
+              </td>
+            </tr>
+            <% vacations.forEach(vacation => { %>
+              <tr>
+                <td class="fw-semibold"><%= vacation.Employee.name %></td>
+                <td><%= vacation.Employee.registration %></td>
+                <td><%= new Date(vacation.startDate + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %></td>
+                <td><%= new Date(vacation.endDate + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %></td>
+                <td class="text-center"><%= vacation.days %></td>
+                <td class="text-center">
+                  <span class="badge <%= 
+                    vacation.status === 'approved' ? 'badge-approved' : 
+                    vacation.status === 'rejected' ? 'badge-rejected' : 'badge-pending' %>">
+                    <%= vacation.status === 'pending' ? 'Pendente' : 
+                        vacation.status === 'approved' ? 'Aprovado' : 'Rejeitado' %>
+                  </span>
+                </td>
+                <td class="text-center action-buttons">
+                  <div class="btn-group btn-group-sm">
+                    <% if (vacation.status === 'pending') { %>
+                      <a href="/vacations/approve/<%= vacation.id %>" class="btn btn-success" title="Aprovar">
+                        <i class="bi bi-check-lg"></i>
+                      </a>
+                      <a href="/vacations/reject/<%= vacation.id %>" class="btn btn-warning" title="Rejeitar">
+                        <i class="bi bi-x-lg"></i>
+                      </a>
+                    <% } %>
+                    <% if (vacation.status === 'rejected') { %>
+                      <a href="/vacations/edit/<%= vacation.id %>" class="btn btn-primary" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="/vacations/delete/<%= vacation.id %>" class="btn btn-danger" title="Excluir">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    <% } %>
+                    <% if (vacation.status === 'approved') { %>
+                      <a href="/vacations/edit/<%= vacation.id %>" class="btn btn-primary" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="card border-0 shadow-sm text-center py-5">
+        <div class="card-body">
+          <i class="bi bi-calendar-x text-muted display-4 mb-3"></i>
+          <h3 class="h4 text-muted mb-3">Nenhuma férias agendada</h3>
+          <p class="text-muted mb-4">Distribua férias para começar a gerenciar os períodos de descanso dos funcionários.</p>
+          <a href="/vacations/distribute" class="btn btn-primary">
+            <i class="bi bi-calendar-plus me-1"></i> Distribuir Férias
+          </a>
+        </div>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../layouts/footer') %>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../layouts/head') %>
+    <title>Aguarde...</title>
+    <style>
+        .logo {
+            width: 10%;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .login-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            color: #0d6efd;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .input-icon {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <%- include('../layouts/header') %>
+
+    <main class="container py-4">
+        <h2>Processando seu arquivo...</h2>
+        <div id="erro" style="color: red; white-space: pre-wrap;"></div>
+        <div id="status">Aguardando início...</div>
+        <div id="progress-bar" style="width: 100%; background: #eee; border-radius: 5px;">
+          <div id="progress" style="width: 0%; background: #4caf50; color: white; text-align: center; border-radius: 5px;">0%</div>
+        </div>
+        <div id="download" style="display:none; margin-top: 20px;">
+          <a id="download-link" class="btn btn-success">Baixar resultado</a>
+        </div>
+    </main>
+
+    <%- include('../layouts/footer') %>
+
+    <script>
+        const taskId = new URLSearchParams(window.location.search).get('taskId');
+        if (!taskId) { alert('ID de tarefa não encontrado!'); window.location.href = '/ponto'; }
+        function atualizarStatus() 
+        {
+            fetch("/ponto/status/progresso/" + taskId)
+            .then(res => 
+            {
+                if (!res.ok) throw new Error('Erro na resposta');
+                return res.json();
+            })
+            .then(data => 
+            {
+                if (data.error) 
+                {
+                    document.getElementById("erro").innerText = data.error;
+                    return;
+                }
+                
+                document.getElementById("status").innerText = data.message;
+                const pct = data.progress + "%";
+                const barra = document.getElementById("progress");
+                barra.style.width = pct;
+                barra.innerText = pct;
+    
+                if (data.progress >= 100  && !data.error) 
+                {
+                    clearInterval(intervalo);
+                    document.getElementById("download").style.display = "block";
+                    document.getElementById("download-link").href = "/ponto/status/" + taskId + "/download";
+                }
+            })
+            .catch(err => 
+            {
+                console.error('Erro:', err);
+                document.getElementById("erro").innerText = "Erro ao conectar com o servidor: " + err;
+            });
+        }
+        
+        const intervalo = setInterval(atualizarStatus, 2000);
+    </script>
+</body>
+</html>

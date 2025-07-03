@@ -1,0 +1,33 @@
+{
+  "name": "ferias-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "ejs": "^3.1.10",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.18.1",
+    "multer": "^2.0.0",
+    "mysql2": "^3.14.1",
+    "python-shell": "^5.0.0",
+    "sequelize": "^6.37.7",
+    "unidecode": "^1.1.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3"
+  }
+}

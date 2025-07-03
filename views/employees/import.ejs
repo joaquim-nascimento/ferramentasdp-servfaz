@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../layouts/head') %>
+  <title>Importar Funcionários</title>
+  <style>
+    .upload-card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 2px dashed #0d6efd;
+      transition: all 0.3s ease;
+    }
+    .upload-card:hover {
+      border-color: #0b5ed7;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    .file-input-label {
+      cursor: pointer;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .file-input-label:hover {
+      background-color: rgba(13, 110, 253, 0.05);
+    }
+    .instructions-card {
+      border-left: 4px solid #0d6efd;
+      background-color: rgba(13, 110, 253, 0.05);
+    }
+    .instruction-step {
+      counter-increment: step-counter;
+      margin-bottom: 0.5rem;
+    }
+    .instruction-step::before {
+      content: counter(step-counter);
+      background-color: #0d6efd;
+      color: white;
+      font-weight: bold;
+      padding: 0.2rem 0.6rem;
+      border-radius: 50%;
+      margin-right: 0.8rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('../layouts/header') %>
+
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h2 fw-bold text-primary">
+        <i class="bi bi-upload me-2"></i>Importar Funcionários
+      </h1>
+      <a href="/employees" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Voltar
+      </a>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-8 mb-4">
+        <div class="card upload-card mb-4">
+          <div class="card-body p-0">
+            <form action="/employees/import" method="POST" enctype="multipart/form-data" id="importForm">
+              <input type="file" name="file" id="file" accept=".xlsx" class="d-none" required>
+              <label for="file" class="file-input-label">
+                <i class="bi bi-file-earmark-excel text-primary mb-3" style="font-size: 3rem;"></i>
+                <h5 class="mb-2">Clique para selecionar um arquivo</h5>
+                <p class="text-muted mb-3">Ou arraste e solte o arquivo Excel aqui</p>
+                <span class="badge bg-primary">Formatos suportados: .xlsx</span>
+              </label>
+              <div class="px-4 pb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div id="fileName" class="text-muted small">Nenhum arquivo selecionado</div>
+                  <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                    <i class="bi bi-upload me-1"></i> Importar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card instructions-card h-100">
+          <div class="card-body">
+            <h3 class="h5 fw-bold mb-3">
+              <i class="bi bi-info-circle-fill text-primary me-2"></i>Instruções para Importação
+            </h3>
+            
+            <div class="alert alert-warning small mb-3">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i> As informações devem começar a partir da <strong>terceira linha</strong> da planilha.
+            </div>
+            
+            <h4 class="h6 fw-bold mt-4 mb-3">Estrutura do Arquivo:</h4>
+            <ol class="list-unstyled" style="counter-reset: step-counter;">
+              <li class="instruction-step">Matrícula</li>
+            </ol>
+            
+            <div class="mt-4">
+              <a href="/templates/modelo.xlsx" class="btn btn-success w-100" download>
+                <i class="bi bi-download me-1"></i> Baixar Modelo
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer') %>
+  
+  <script>
+    document.getElementById('file').addEventListener('change', function(e) 
+    {
+      const fileName = e.target.files[0] ? e.target.files[0].name : 'Nenhum arquivo selecionado';
+      document.getElementById('fileName').textContent = fileName;
+      document.getElementById('submitBtn').disabled = !e.target.files[0];
+      
+      const card = document.querySelector('.upload-card');
+      if (e.target.files[0]) 
+      {
+        card.classList.add('border-success');
+        card.classList.remove('border-primary');
+      } 
+      else 
+      {
+        card.classList.add('border-primary');
+        card.classList.remove('border-success');
+      }
+    });
+
+    const dropArea = document.querySelector('.file-input-label');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) 
+    {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() 
+    {
+      dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.1)';
+    }
+
+    function unhighlight() 
+    {
+      dropArea.style.backgroundColor = '';
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) 
+    {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      const fileInput = document.getElementById('file');
+      fileInput.files = files;
+      
+      const event = new Event('change');
+      fileInput.dispatchEvent(event);
+    }
+  </script>
+</body>
+</html>

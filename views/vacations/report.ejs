@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../layouts/head') %>
+  <title>Relatório de Férias</title>
+  <style>
+    .report-card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .table-responsive {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .table thead th {
+      background-color: #0d6efd;
+      color: white;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+    .empty-state {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 2rem;
+    }
+    .export-btn {
+      min-width: 150px;
+    }
+    .vacation-period {
+      font-weight: 500;
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <%- include('../layouts/header') %>
+
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h2 fw-bold text-primary">
+        <i class="bi bi-file-earmark-text me-2"></i>Relatório de Férias
+      </h1>
+    </div>
+    
+    <div class="card report-card mb-4">
+      <div class="card-body">
+        <form action="/vacations/report" method="GET" class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label for="filter" class="form-label">Filtrar por:</label>
+            <select id="filter" name="filter" class="form-select">
+              <option value="" <%= filter === '' ? 'selected' : '' %>>Todos os registros</option>
+              <option value="month" <%= filter === 'month' ? 'selected' : '' %>>Por mês</option>
+              <option value="contractNumber" <%= filter === 'contractNumber' ? 'selected' : '' %>>Por contrato</option>
+              <option value="status" <%= filter === 'status' ? 'selected' : '' %>>Por status</option>
+            </select>
+          </div>
+          
+          <div class="col-md-4">
+            <% if (filter === 'month') { %>
+              <label for="month" class="form-label">Selecione o mês:</label>
+              <input id="month" type="month" name="value" class="form-control" value="<%= value || '' %>">
+            <% } else if (filter === 'contractNumber') { %>
+              <label for="contractNumber" class="form-label">Número do contrato:</label>
+              <input id="contractNumber" type="text" name="value" class="form-control" placeholder="Digite o número" value="<%= value || '' %>">
+            <% } else if (filter === 'status') { %>
+              <label for="status" class="form-label">Status:</label>
+              <select id="status" name="value" class="form-select">
+                <option value="approved" <%= value === 'approved' ? 'selected' : '' %>>Aprovadas</option>
+                <option value="pending" <%= value === 'pending' ? 'selected' : '' %>>Pendentes</option>
+                <option value="rejected" <%= value === 'rejected' ? 'selected' : '' %>>Rejeitadas</option>
+              </select>
+            <% } else { %>
+              <label class="form-label">Selecione um filtro</label>
+              <input type="text" class="form-control" disabled placeholder="Selecione um filtro ao lado">
+            <% } %>
+          </div>
+          
+          <div class="col-md-4 d-grid">
+            <a href="/vacations/report/export?filter=<%= filter %>&value=<%= value %>" class="btn btn-success export-btn">
+              <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <% if (employees && employees.length > 0) { %>
+      <div class="card report-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-table me-2"></i>Resultados do Relatório
+            </h5>
+            <div class="text-muted small">
+              Total de registros: <%= employees.reduce((acc, emp) => acc + emp.Vacations.length, 0) %>
+            </div>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-primary">
+                <tr>
+                  <th>Matrícula</th>
+                  <th>Funcionário</th>
+                  <th>Contrato</th>
+                  <th>Data de Admissão</th>
+                  <th>Período de Férias</th>
+                  <th class="text-center">Dias</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% employees.forEach(employee => { %>
+                  <% employee.Vacations.forEach(vacation => { %>
+                    <tr>
+                      <td class="fw-semibold"><%= employee.name %></td>
+                      <td><%= employee.registration %></td>
+                      <td><%= employee.contractNumber || '-' %></td>
+                      <td><%= new Date(employee.admissionDate + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %></td>
+                      <td class="vacation-period">
+                        <%= new Date(vacation.startDate + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %> 
+                        a 
+                        <%= new Date(vacation.endDate + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %>
+                      </td>
+                      <td class="text-center"><%= vacation.days %></td>
+                      <td class="text-center">
+                        <span class="badge <%= 
+                          vacation.status === 'approved' ? 'bg-success' : 
+                          vacation.status === 'rejected' ? 'bg-danger' : 'bg-warning' %>">
+                          <%= vacation.status === 'pending' ? 'Pendente' : 
+                              vacation.status === 'approved' ? 'Aprovado' : 'Rejeitado' %>
+                        </span>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="card empty-state text-center py-5">
+        <div class="card-body">
+          <i class="bi bi-search display-4 text-muted mb-3"></i>
+          <h3 class="h4 text-muted mb-3">Nenhum dado encontrado</h3>
+          <p class="text-muted mb-4">Nenhum registro de férias corresponde aos filtros aplicados.</p>
+          <a href="/vacations/report" class="btn btn-primary">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Limpar Filtros
+          </a>
+        </div>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../layouts/footer') %>
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', () => 
+      {
+        const filterSelect = document.getElementById('filter');
+
+        const submitForm = () => { filterSelect.form.submit(); };
+
+        filterSelect.addEventListener('change', () => 
+        {
+          const monthInput = document.getElementById('month');
+          const contractInput = document.getElementById('contractNumber');
+
+          if (monthInput) 
+          {
+            monthInput.value = '';
+            monthInput.addEventListener('input', submitForm);
+          }
+
+          if (contractInput) 
+          {
+            contractInput.value = '';
+            contractInput.addEventListener('change', submitForm);
+          }
+
+          if (statusSelect)
+          {
+            statusSelect.value = '';
+            statusSelect.addEventListener('change', submitForm);
+          }
+
+          filterSelect.form.submit();
+        });
+
+        const monthInput = document.getElementById('month');
+        const contractInput = document.getElementById('contractNumber');
+        const statusSelect = document.getElementById('status');
+
+        if (monthInput) monthInput.addEventListener('input', submitForm);
+        if (contractInput) contractInput.addEventListener('change', submitForm);
+        if (statusSelect) statusSelect.addEventListener('change', submitForm);
+      });
+  </script>
+</body>
+</html>
