@@ -160,12 +160,12 @@ def processar_arquivo(txt_path):
                     "MATRICULA": matricula,
                     "PIS/PASEP": pis,
                     "DTA.ADM.": dtadm,
-                    "COMPETENCIAS_NAO_LOCALIZADAS": set(),
+                    "COMPETENCIAS_NAO_LOCALIZADAS": [],
                     "DEPOSITOS_EM_ATRASO": []
                 }
             
             if competencias:
-                dados[chave]["COMPETENCIAS_NAO_LOCALIZADAS"].update(competencias.split())
+                dados[chave]["COMP_LIST"].append(set(competencias.split()))
 
             if depositos_atraso:
                 dados[chave]["DEPOSITOS_EM_ATRASO"].extend(depositos_atraso)
@@ -173,7 +173,13 @@ def processar_arquivo(txt_path):
     lista_competencias = []
     lista_depositos = []
     for registro in dados.values():
-        competencias_ordenadas = ordenar_competencias(registro["COMPETENCIAS_NAO_LOCALIZADAS"])
+        if registro["COMPETENCIAS_NAO_LOCALIZADAS"]:
+            competencias_intersec = set.intersection(*registro["COMP_LIST"])
+        else:
+            competencias_intersec = set()
+            
+        competencias_ordenadas = ordenar_competencias(competencias_intersec)
+        
         qtd_competencias = len(competencias_ordenadas)
         
         lista_competencias.append({
