@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../layouts/head') %>
+    <title>Gerador de Arquivo VA</title>
+</head>
+<body class="bg-light">
+    <%- include('../layouts/header') %>
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Gerador de Arquivo VA</h1>
+
+        <% if (messages.error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= messages.error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+
+        <form method="POST" action="/va" enctype="multipart/form-data" class="border p-4 bg-white rounded shadow-sm">
+            <div class="mb-3">
+                <label for="planilha" class="form-label">Planilha Excel com os dados:</label>
+                <input class="form-control" type="file" id="planilha" name="planilha" accept=".xlsx" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="template" class="form-label">Arquivo TXT template:</label>
+                <input class="form-control" type="file" id="template" name="template" accept=".txt" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Gerar Arquivo VA</button>
+        </form>
+    </div>
+
+    <%- include('../layouts/footer') %>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) 
+        {
+            const planilha = document.getElementById('planilha');
+            const template = document.getElementById('template');
+            if (!planilha.files.length || !template.files.length) 
+            {
+                e.preventDefault();
+                alert('Por favor, selecione ambos os arquivos: planilha e template.');
+            }
+        });
+    </script>
+</body>
+</html>
