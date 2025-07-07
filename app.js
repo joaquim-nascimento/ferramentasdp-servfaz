@@ -12,6 +12,7 @@ const appRoutes       = require('./routes/appRoutes');
 const feriasAppRoutes = require('./routes/feriasAppRoutes');
 const pontoAppRoutes  = require('./routes/pontoAppRoutes');
 const fgtsAppRoutes   = require('./routes/fgtsAppRoutes');
+const vaAppRoutes     = require('./routes/vaAppRoutes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/', auth, appRoutes)
 app.use('/ferias', auth, feriasAppRoutes);
 app.use('/ponto', auth, pontoAppRoutes);
 app.use('/fgts', auth, fgtsAppRoutes);
+app.use('/va', auth, vaAppRoutes);
 
 // Sincronizar banco de dados e iniciar servidor
 sequelize.sync().then(() => { app.listen(3000, () => { console.log('Servidor rodando na porta 3000'); }); });
