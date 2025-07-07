@@ -1,22 +1,22 @@
 {
   "development": {
+    "name": "feriasdb",
     "username": "root",
-    "password": "96913841a",
-    "database": "ferias_db",
+    "password": "ferias_p@@sw0rd"
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
+    "name": "feriasdb",
     "username": "root",
-    "password": "96913841a",
-    "database": "ferias_db",
+    "password": "ferias_p@@sw0rd"
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
+    "name": "feriasdb",
     "username": "root",
-    "password": "96913841a",
-    "database": "ferias_db",
+    "password": "ferias_p@@sw0rd"
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
