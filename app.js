@@ -16,11 +16,9 @@ const vaAppRoutes     = require('./routes/vaAppRoutes');
 
 const app = express();
 
-// Configurações
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middlewares
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,7 +27,6 @@ app.use(flash());
 
 const auth = require('./middlewares/auth');
 
-// Rotas
 app.use('/auth', authRoutes);
 app.use('/employees', auth, employeeRoutes);
 app.use('/vacations', auth, vacationRoutes);
@@ -40,5 +37,4 @@ app.use('/ponto', auth, pontoAppRoutes);
 app.use('/fgts', auth, fgtsAppRoutes);
 app.use('/va', auth, vaAppRoutes);
 
-// Sincronizar banco de dados e iniciar servidor
 sequelize.sync().then(() => { app.listen(3000, () => { console.log('Servidor rodando na porta 3000'); }); });
