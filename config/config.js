@@ -3,9 +3,9 @@ module.exports =
   database: 
   {
     host: 'localhost',
-    name: 'ferias_db',
+    name: 'feriasdb',
     username: 'root',
-    password: '96913841a'
+    password: 'ferias_p@@sw0rd'
   },
-  sessionSecret: 'your-secret-key'
+  sessionSecret: 'ferias_secret_key'
 };
