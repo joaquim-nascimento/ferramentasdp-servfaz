@@ -370,7 +370,7 @@ def processar_partes(task_id, caminho_pdf, output_path):
 
         salvar_status(task_id, 99, "[Finalização] Salvando resultado final...")
         df = pd.DataFrame(todos)
-        df.to_excel(output_path, index=False, encoding='utf-8')
+        df.to_excel(output_path, index=False)
         salvar_status(task_id, 100, "[Concluído] Arquivo de inconsistências salvo com sucesso.")
 
     except Exception as e:

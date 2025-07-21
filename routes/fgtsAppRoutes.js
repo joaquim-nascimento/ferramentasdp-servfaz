@@ -4,6 +4,7 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const upload = require('../middlewares/upload');
+const os = require('os');
 
 const UPLOAD_FOLDER = 'uploads';
 if (!fs.existsSync(UPLOAD_FOLDER)) { fs.mkdirSync(UPLOAD_FOLDER); }
@@ -12,7 +13,7 @@ router.get('/', (req, res) => { res.render('fgts-app/fgts-index'); });
 
 router.post('/', upload.array('txt_files', 2), async (req, res) => 
 {
-    if (!req.files || req.files.length !== 2) 
+    if (!req.files) 
     {
         req.flash('error', 'Por favor, envie exatamente dois arquivos para comparação.');
         return res.redirect('/fgts');
@@ -21,42 +22,51 @@ router.post('/', upload.array('txt_files', 2), async (req, res) =>
     try 
     {
         const files = req.files;
-        const filepaths = files.map(file => file.path);
-        
-        const pythonPath = path.resolve(__dirname, '..', 'venv', 'Scripts', 'python.exe');
+        const filepaths = files.map(f => f.path);
+
+        const isWindows = os.platform() === 'win32';
+        const pythonPath = path.resolve(__dirname, '..', 'venv', isWindows ? 'Scripts' : 'bin', isWindows ? 'python.exe' : 'python');
         const scriptPath = path.resolve(__dirname, '..', 'fgts-app.py');
 
         const python = spawn(pythonPath, [scriptPath, ...filepaths]);
-        
-        let resultData = Buffer.from('');
-        let errorData = Buffer.from('');
-        
-        python.stdout.on('data', (data) => { resultData = Buffer.concat([resultData, data]); });
-        
-        python.stderr.on('data', (data) => 
-        {
-            errorData = Buffer.concat([errorData, data]);
-            console.error(`[PYTHON ERROR] ${data}`);
-        });
-        
+
+        let stdout = '';
+        let stderr = '';
+
+        python.stdout.on('data', (data) => { stdout += data.toString(); });
+        python.stderr.on('data', (data) => { stderr += data.toString(); });
+
         python.on('close', (code) => 
         {
-            files.forEach(file => 
-            {
-                try { fs.unlinkSync(file.path); } 
-                catch (err) { console.error(err); }
-            });
+            files.forEach(f => { try { fs.unlinkSync(f.path); } catch (err) { console.error(err); } });
 
             if (code !== 0) 
             {
-                req.flash('error', `Erro no processamento: ${errorData.toString()}`);
+                console.error(`[PYTHON ERROR]: ${stderr}`);
+                req.flash('error', `Erro no processamento: ${stderr}`);
                 return res.redirect('/fgts');
             }
-            
-            res.set({ 'Content-Type': 'application/zip', 'Content-Disposition': 'attachment; filename=resultados_fgts.zip' });
-            res.send(resultData);
-        });
-        
+
+            const zipPath = stdout.trim();
+
+            if (!fs.existsSync(zipPath)) 
+            {
+                req.flash('error', 'Arquivo não encontrado após processamento.');
+                return res.redirect('/fgts');
+            }
+
+            res.download(zipPath, 'resultados_fgts.zip', (err) => 
+            {
+                try { fs.unlinkSync(zipPath); } catch (e) { console.error(e); }
+
+                if (err) 
+                {
+                    console.error(err);
+                    req.flash('error', 'Erro ao baixar o arquivo.');
+                    return res.redirect('/fgts');
+                }
+            });
+        }); 
     } 
     catch (err) 
     {

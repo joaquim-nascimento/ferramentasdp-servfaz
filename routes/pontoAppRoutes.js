@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const upload = require('../middlewares/upload');
+const os = require('os');
 
 const UPLOAD_FOLDER = 'uploads';
 if (!fs.existsSync(UPLOAD_FOLDER)) { fs.mkdirSync(UPLOAD_FOLDER); }
@@ -31,7 +32,8 @@ router.post('/', upload.single('pdf_file'), async (req, res) =>
 
         fs.renameSync(file.path, filepath);
 
-        const pythonPath = path.resolve(__dirname, '..', 'venv', 'Scripts', 'python.exe');
+        const isWindows = os.platform() === 'win32';
+        const pythonPath = path.resolve(__dirname, '..', 'venv', isWindows ? 'Scripts' : 'bin', isWindows ? 'python.exe' : 'python');
         const scriptPath = path.resolve(__dirname, '..', 'ponto-app.py');
 
         const python = spawn(pythonPath, [scriptPath, taskId, filepath, outputPath]);
